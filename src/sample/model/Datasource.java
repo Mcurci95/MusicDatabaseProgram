@@ -37,6 +37,9 @@ public class Datasource {
     public static final int ORDER_BY_ASC = 1;
     public static final int ORDER_BY_DESC = 2;
 
+    public static final String QUERY_ALBUMS_BY_ARTIST_ID = "SELECT * FROM " + TABLE_ALBUMS +
+            " WHERE " + COLUMN_ALBUM_ARTIST + " = ? ORDER BY " + COLUMN_ALBUM_NAME + " COLLATE NOCASE";
+
     private Connection conn;
 
     private static Datasource instance = new Datasource();
@@ -115,6 +118,27 @@ public class Datasource {
             List<String> albums = new ArrayList<>();
             while (results.next()) {
                 String album = results.getString(1);
+                albums.add(album);
+            }
+            return albums;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Album> queryAlbumForArtistId(int id) {
+        try {
+            PreparedStatement queryAlbumByArtistsId = conn.prepareStatement(QUERY_ALBUMS_BY_ARTIST_ID);
+            queryAlbumByArtistsId.setInt(1, id);
+            ResultSet results = queryAlbumByArtistsId.executeQuery();
+
+            List<Album> albums = new ArrayList<>();
+            while(results.next()) {
+                Album album = new Album();
+                album.setId(results.getInt(1));
+                album.setName(results.getString(2));
+                album.setArtistID(results.getInt(3));
                 albums.add(album);
             }
             return albums;
