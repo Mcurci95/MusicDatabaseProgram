@@ -13,7 +13,7 @@ import sample.model.Datasource;
 public class Controller {
 
     @FXML
-    private TableView<Artist> artistTable;
+    private TableView artistTable;
 
     public void listArtists() {
         Task<ObservableList<Artist>> task = new GetAllArtistsTask();
@@ -38,6 +38,8 @@ public class Controller {
             }
         };
         artistTable.itemsProperty().bind(task.valueProperty());
+
+        new Thread(task).start();
     }
 }
 
